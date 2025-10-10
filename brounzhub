@@ -681,22 +681,22 @@ Sound.SoundId = "rbxassetid://128018172854846";
 Sound:Play();
 wait(0.1)
 game.StarterGui:SetCore("SendNotification", {
-    Title = "جاري التحميل... ";
-    Text = "سكربت المطور bronze "; -- ARAB TEAM
+    Title = "جاري تحميل سكربت برونز";
+    Text = "سكربت المطور Shadow"; -- ARAB TEAM
     Duration = 5;
 })
 
 wait(0.3)
 game.StarterGui:SetCore("SendNotification", {
-    Title = "خلاص السكريت قرب يشتغل... ";
-    Text = "سكربت المطور bronze "; -- ARAB TEAM
+    Title = "بعد شويه عزيزي";
+    Text = "سكربت المطور Shadow"; -- ARAB TEAM
     Duration = 5;
 })
 
 wait(0.5)
 game.StarterGui:SetCore("SendNotification", {
     Title ="تم التحميل بنجاح... ";
-    Text = "️سكربت المطور bronze "; -- ARAB TEAM
+    Text  ="شكرا لاختيارك"; -- ARAB TEAM
     Duration = 5;
 })
 
@@ -704,11 +704,12 @@ game.StarterGui:SetCore("SendNotification", {
 game:GetService("ReplicatedStorage").RE:FindFirstChild("1RPNam1eTex1t"):FireServer(unpack(args))
 wait(0.9)
 
+
 loadstring(game:HttpGet(("https://raw.githubusercontent.com/youssefhesham542/Y2-Hub/main/interface1")))()
 MakeWindow({
   Hub = {
     Title = "bronze  HUB | BROOKHAVEN",
-    Animation = "Bronze Hub by Shadow"
+    Animation = "Bronze Hub "
   },
   Key = {
     KeySystem = false,
@@ -734,7 +735,7 @@ MinimizeButton({
   StrokeColor = Color3.fromRGB(10, 10, 10)
 })
 
-amlocal Main = MakeTab({Name = "حقوق"})
+local Main = MakeTab({Name = "حقوق المطور"})
 local Image = AddImageLabel(Main, {
   Name = "BROOKHAVEN_Script",
   Image = "rbxassetid://110416050563182"
@@ -743,13 +744,13 @@ local Paragraph = AddParagraph(Main, {"سكربت عبارة عن مجموعة �
 AddButton(Main, {
   Name = "انسخ يوزر قناتي يوتيوب",
   Callback = function()
-    setclipboard('قريب بسوي قناه')
+    setclipboard('قريب بحط🙂')
   end
 })
 AddButton(Main, {
   Name = "انسخ رابط قناتي تلي",
   Callback = function()
-    setclipboard('قريب بسوي قناه🙂')
+    setclipboard('قريب بحط🙂♥')
   end
 })
 local Main = MakeTab({Name = "الروؤس والاجسام"})
