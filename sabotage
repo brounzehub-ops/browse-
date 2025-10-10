@@ -69,7 +69,7 @@ local CloseOpen = Instance.new("TextButton")
 
 --Properties:
 
-KAZU.Name = "KAZU"
+KAZU.Name = "Shadow"
 KAZU.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 KAZU.ResetOnSpawn = false
 
@@ -604,7 +604,7 @@ Title_12.Text = "Settings"
 Title_12.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title_12.TextSize = 24.000
 
-Madeby.Name = "Made by"
+Madeby.Name = "Made by Shadow"
 Madeby.Parent = Settings
 Madeby.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 Madeby.BorderColor3 = Color3.fromRGB(255, 0, 0)
@@ -651,7 +651,7 @@ Title_13.BorderSizePixel = 3
 Title_13.Size = UDim2.new(1, 0, 0, 40)
 Title_13.ZIndex = 2
 Title_13.Font = Enum.Font.SourceSans
-Title_13.Text = "KAZU المطور"
+Title_13.Text = "Shadow is back"
 Title_13.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title_13.TextSize = 24.000
 
