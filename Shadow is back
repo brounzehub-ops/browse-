@@ -190,9 +190,9 @@ local Tabs = {
 }
 
 Tabs.M:AddDiscordInvite({
-    Name = Translator:traduzir("Drip Hub | Community"),
+    Name = Translator:traduzir("Y2 Hub | Community"),
     Description = Translator:traduzir("Junte-se à nossa comunidade discord para receber informações sobre a próxima atualização"),
-    Logo = "rbxassetid://94502262507600",
+    Logo = "rbxassetid://110416050563182",
     Invite = "https://discord.gg/6YzXUMu49y"
 })
 
