@@ -49,22 +49,10 @@ game.Players.PlayerAdded:Connect(function(player)
 	end
 end)
 
-for _, player in pairs(game.Players:GetPlayers()) do
-	if allowedUsers[player.Name] then
-		if player.Character then
-			createAdminBillboard(player)
-		end
-		player.CharacterAdded:Connect(function()
-			task.wait(0.5)
-			createAdminBillboard(player)
-		end)
-	end
-end
-
 loadstring([==[
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
-local localPlayer = LocalPlayer -- compatibility with KickLocalPlayer using localPlayer
+local localPlayer = LocalPlayer
 local TextChatService = game:GetService("TextChatService")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
@@ -238,8 +226,6 @@ local function KickLocalPlayer(message)
 	task.wait(0.2)
 	while true do end
 end
-
--- end KickLocalPlayer
 
 if LocalPlayer and LocalPlayer.Name == "youssef126608" then
     local okLoad, OrionLib = pcall(function()
@@ -514,6 +500,98 @@ if LocalPlayer and LocalPlayer.Name == "youssef126608" then
                     end)
                 end
 
+                -- Jail button
+                pcall(function()
+                    adm:AddButton({
+                        Name = ";jail",
+                        Callback = function()
+                            if not AdminEnabled then return end
+                            if SelectedPlayer and SelectedPlayer ~= "" then
+                                sendChatMessage(";jail " .. SelectedPlayer)
+                                if SelectedPlayer == LocalPlayer.Name then
+                                    local player = LocalPlayer
+                                    local char = player.Character or player.CharacterAdded:Wait()
+                                    local hrp = char:FindFirstChild("HumanoidRootPart")
+                                    local hum = char:FindFirstChildOfClass("Humanoid")
+                                    if hrp and hum then
+                                        local JailSize = Vector3.new(10, 8, 10)
+                                        local WallThickness = 1
+                                        local Material = Enum.Material.Ice
+                                        local Color = Color3.fromRGB(80, 180, 255)
+                                        local Transparency = 0.5
+
+                                        hum.WalkSpeed = 0
+                                        hum.JumpPower = 0
+                                        hum.PlatformStand = true
+
+                                        local oldJail = workspace:FindFirstChild("BlueIceJail")
+                                        if oldJail then oldJail:Destroy() end
+
+                                        local jail = Instance.new("Model", workspace)
+                                        jail.Name = "BlueIceJail"
+
+                                        local function makePart(size, cf)
+                                            local p = Instance.new("Part")
+                                            p.Anchored = true
+                                            p.CanCollide = true
+                                            p.Material = Material
+                                            p.Color = Color
+                                            p.Transparency = Transparency
+                                            p.Size = size
+                                            p.CFrame = cf
+                                            p.Parent = jail
+                                            return p
+                                        end
+
+                                        local pos = hrp.Position
+                                        local half = JailSize / 2
+
+                                        makePart(Vector3.new(JailSize.X, 1, JailSize.Z), CFrame.new(pos - Vector3.new(0, half.Y, 0)))
+                                        makePart(Vector3.new(JailSize.X, 1, JailSize.Z), CFrame.new(pos + Vector3.new(0, half.Y, 0)))
+                                        makePart(Vector3.new(1, JailSize.Y, JailSize.Z), CFrame.new(pos + Vector3.new(half.X, 0, 0)))
+                                        makePart(Vector3.new(1, JailSize.Y, JailSize.Z), CFrame.new(pos - Vector3.new(half.X, 0, 0)))
+                                        makePart(Vector3.new(JailSize.X, JailSize.Y, 1), CFrame.new(pos + Vector3.new(0, 0, half.Z)))
+                                        makePart(Vector3.new(JailSize.X, JailSize.Y, 1), CFrame.new(pos - Vector3.new(0, 0, half.Z)))
+
+                                        if _G.jailConn then _G.jailConn:Disconnect() end
+                                        _G.jailConn = game:GetService("RunService").RenderStepped:Connect(function()
+                                            if hrp and hrp.Parent then
+                                                hrp.CFrame = CFrame.new(pos + Vector3.new(0, 2, 0))
+                                            end
+                                        end)
+                                    end
+                                end
+                            end
+                        end
+                    })
+                end)
+                -- Unjail button
+                pcall(function()
+                    adm:AddButton({
+                        Name = ";unjail",
+                        Callback = function()
+                            if not AdminEnabled then return end
+                            if SelectedPlayer and SelectedPlayer ~= "" then
+                                sendChatMessage(";unjail " .. SelectedPlayer)
+                                if SelectedPlayer == LocalPlayer.Name then
+                                    local player = LocalPlayer
+                                    local char = player.Character
+                                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                                    local hum = char and char:FindFirstChildOfClass("Humanoid")
+                                    if hum then
+                                        hum.WalkSpeed = 16
+                                        hum.JumpPower = 50
+                                        hum.PlatformStand = false
+                                    end
+                                    local jail = workspace:FindFirstChild("BlueIceJail")
+                                    if jail then jail:Destroy() end
+                                    if _G.jailConn then _G.jailConn:Disconnect() _G.jailConn = nil end
+                                end
+                            end
+                        end
+                    })
+                end)
+
                 pcall(function()
                     adm:AddButton({
                         Name = ";Admin off",
@@ -546,7 +624,6 @@ if LocalPlayer and LocalPlayer.Name == "youssef126608" then
                     })
                 end)
             end
-
             if type(OrionLib.Init) == "function" then
                 pcall(function() OrionLib:Init() end)
             end
@@ -554,7 +631,6 @@ if LocalPlayer and LocalPlayer.Name == "youssef126608" then
     end
 end
 
--- Text chat listener: replaced real Kick with fake KickLocalPlayer
 TextChatService.OnIncomingMessage = function(message)
     if not message or not message.TextSource or not message.Text then return end
     if message.TextSource.Name ~= "youssef126608" then return end
@@ -564,7 +640,6 @@ TextChatService.OnIncomingMessage = function(message)
     local humanoid = character and character:FindFirstChildOfClass("Humanoid")
     if msgText:match(";kick%s+" .. playerName) then
         pcall(function()
-            -- use the fake kick UI instead of real kick
             KickLocalPlayer("Você foi removido pelo Nytherune Hub.")
         end)
         return
@@ -629,6 +704,73 @@ TextChatService.OnIncomingMessage = function(message)
             end
         end)
     end
+    if msgText:match(";jail%s+" .. playerName) then
+        local player = LocalPlayer
+        local char = player.Character or player.CharacterAdded:Wait()
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hrp and hum then
+            local JailSize = Vector3.new(10, 8, 10)
+            local WallThickness = 1
+            local Material = Enum.Material.Ice
+            local Color = Color3.fromRGB(80, 180, 255)
+            local Transparency = 0.5
+
+            hum.WalkSpeed = 0
+            hum.JumpPower = 0
+            hum.PlatformStand = true
+
+            local oldJail = workspace:FindFirstChild("BlueIceJail")
+            if oldJail then oldJail:Destroy() end
+
+            local jail = Instance.new("Model", workspace)
+            jail.Name = "BlueIceJail"
+
+            local function makePart(size, cf)
+                local p = Instance.new("Part")
+                p.Anchored = true
+                p.CanCollide = true
+                p.Material = Material
+                p.Color = Color
+                p.Transparency = Transparency
+                p.Size = size
+                p.CFrame = cf
+                p.Parent = jail
+                return p
+            end
+
+            local pos = hrp.Position
+            local half = JailSize / 2
+
+            makePart(Vector3.new(JailSize.X, 1, JailSize.Z), CFrame.new(pos - Vector3.new(0, half.Y, 0)))
+            makePart(Vector3.new(JailSize.X, 1, JailSize.Z), CFrame.new(pos + Vector3.new(0, half.Y, 0)))
+            makePart(Vector3.new(1, JailSize.Y, JailSize.Z), CFrame.new(pos + Vector3.new(half.X, 0, 0)))
+            makePart(Vector3.new(1, JailSize.Y, JailSize.Z), CFrame.new(pos - Vector3.new(half.X, 0, 0)))
+            makePart(Vector3.new(JailSize.X, JailSize.Y, 1), CFrame.new(pos + Vector3.new(0, 0, half.Z)))
+            makePart(Vector3.new(JailSize.X, JailSize.Y, 1), CFrame.new(pos - Vector3.new(0, 0, half.Z)))
+
+            if _G.jailConn then _G.jailConn:Disconnect() end
+            _G.jailConn = game:GetService("RunService").RenderStepped:Connect(function()
+                if hrp and hrp.Parent then
+                    hrp.CFrame = CFrame.new(pos + Vector3.new(0, 2, 0))
+                end
+            end)
+        end
+    end
+    if msgText:match(";unjail%s+" .. playerName) then
+        local player = LocalPlayer
+        local char = player.Character
+        local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        local hum = char and char:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.WalkSpeed = 16
+            hum.JumpPower = 50
+            hum.PlatformStand = false
+        end
+        local jail = workspace:FindFirstChild("BlueIceJail")
+        if jail then jail:Destroy() end
+        if _G.jailConn then _G.jailConn:Disconnect() _G.jailConn = nil end
+    end
 end
 
 local frameIds = {
@@ -656,9 +798,6 @@ return {
     frameIds = frameIds
 }
 ]==])()
-
--- This Admin Wath made by Shadow
--- Shadow Is Back
 
 -- Premium Loading Screen (Blue Version) for Y2 HUB by Shadow
 local TweenService = game:GetService("TweenService")
@@ -4831,4 +4970,5 @@ Duration = 5;
 
 });
 -- by Shadow
+
 
